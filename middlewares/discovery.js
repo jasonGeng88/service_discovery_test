@@ -1,11 +1,13 @@
 "use strict";
 
 var zookeeper = require('node-zookeeper-client');
+var loadbalance = require('loadbalance')
 var cache = require('./localStorage');
 var constants = require('../constants')
 
 var client = zookeeper.createClient(constants.ZK_HOSTS);
 cache.setItem(constants.ROUTE_KEY, {});
+cache.setItem(constants.LOAD_BALANCE_KEY, {});
 
 function start() {
     client.connect();
@@ -19,7 +21,10 @@ function start() {
 function getServices(path) {
     client.getChildren(
         path,
-        null,
+        function (event) {
+            console.log('Got watcher event: %s', event);
+            getServices(constants.SERVICE_ROOT_PATH);
+        },
         function(error, children, stat) {
             if (error) {
                 console.log(
@@ -51,7 +56,10 @@ function getService(path) {
                 );
                 return;
             }
-            cache.getItem(constants.ROUTE_KEY)[path] = children;
+            if (children.length > 0){
+                cache.getItem(constants.ROUTE_KEY)[path] = children;
+                cache.getItem(constants.LOAD_BALANCE_KEY)[path] = loadbalance.roundRobin(children);
+            }
 
         }
     );

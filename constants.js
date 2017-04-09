@@ -7,6 +7,9 @@ function define(name, value) {
     });
 }
 
-define("ZK_HOSTS", 'localhost:2181,localhost:2182,localhost:2183');
-define("SERVICE_ROOT_PATH", '/services');
-define("ROUTE_KEY", 'services');
+define('ZK_HOSTS', 'localhost:2181,localhost:2182,localhost:2183');
+define('SERVICE_ROOT_PATH', '/services');
+define('ROUTE_KEY', 'services');
+define('LOAD_BALANCE_KEY', 'loadbalance');
+define('SERVICE_NAME', 'service_name');
+define('API_NAME', 'api_name');
