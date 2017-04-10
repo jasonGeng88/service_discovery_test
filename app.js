@@ -1,27 +1,18 @@
 var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-
-var reverseProxy = require('./routes/reverseProxy');
-
+var reverseProxy = require('./routes/reverse-proxy');
 var discovery = require('./middlewares/discovery');
-
 var app = express();
 
 // service discovery start
-discovery.start();
+discovery();
 
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-    extended: false
-}));
-app.use(cookieParser());
+// define the home page route
+app.get('/', function(req, res) {
+    res.send('This is a Service Gateway Demo')
+});
 
-app.use('/proxy', reverseProxy);
+// define proxy route
+app.use('/services', reverseProxy);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
